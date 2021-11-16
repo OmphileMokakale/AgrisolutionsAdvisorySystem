@@ -1,0 +1,134 @@
+
+*{
+  box-sizing: border-box;
+  outline: none;
+  }
+  body{
+  margin: 0;
+  padding: 0;
+  
+  }
+  .container{
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  }
+  img{
+  width: 100%;
+  height: 100vh;
+  
+  }
+  .container nav{
+  position: absolute;
+  width: 100%;
+  top: 0;
+  height: 60px;
+  background-color: #2be213;
+  color: white;
+  }
+  nav .webname{
+  float: left;
+  margin: 15px 0 15px 30px;
+  font-size: 30px;
+  }
+  nav ul{
+  float: right;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 600px;
+  
+  }
+  nav li{
+  display: inline-block;
+  line-height: 56px;
+  margin:0 25px;
+  }
+  nav li a{
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
+  transition: .5s all;
+  }
+  a:hover{
+  color:#1c2833;
+  border-bottom: 5px solid white;
+  }
+  #search{
+  position: relative;
+  margin-top: 10px;
+  padding: 5px 10px 5px 20px;
+  width: 250px;
+  height: 40px;
+  border-bottom: 2px solid#006699;
+  font-size: 15px;
+  color: #006699;
+  border-radius: 50px;
+  align-items: center;
+  float: right;
+  z-index: 0;
+  }
+  
+  #submit{
+  position: relative;
+  left: -40px;
+  margin-top: 10px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  border-radius: 50%;
+  float: right;
+  background-color: #006699;
+  color: white;
+  cursor: pointer;
+  z-index: 1;
+  }
+  #btn{
+  display: none;
+  
+  }
+  .check{
+  font-size: 30px;
+  color: white;
+  float: right;
+  line-height: 60px;
+  margin-right: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+  transform: rotate(-90deg);
+  display: none;
+  }
+  @media(max-width: 1100px){
+  nav ul{
+  position: fixed;
+  width: 40%;
+  height: 100vh;
+  top: 60px;
+  left: 100%;
+  text-align: center;
+  background-color: #2c3e50;
+  transition: all .5s;
+  }
+  nav ul li{
+  display: block;
+  }
+  nav ul li a{
+  font-size: 20px;
+  color: white;
+  }
+  .check{
+  display: block;
+  }
+  #btn:checked ~ ul{
+  left: 60%;
+  }
+  }
+  @media(max-width: 670px){
+  #submit,#search{
+  display: none;
+  }
+  }
+  
+  
