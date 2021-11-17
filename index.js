@@ -24,11 +24,6 @@ app.use(express.json())
 app.use(express.static('public'));
 
 
-
-
-
-
-
 open({
 	filename: './login.db',
 	driver: sqlite3.Database
