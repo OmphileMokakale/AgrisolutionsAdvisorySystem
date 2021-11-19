@@ -176,12 +176,22 @@
                         <input class="contactus" placeholder="Crop Type" type="type" name="crop_type">
                     </div>
                     <div class="col-sm-12">
-                        <button class="send_btn">Send</button>
+                        <button type="submit" class="send_btn">Send</button>
                     </div>
                 </div>
             </form>
         </div>
-
+        <h5>Feedback</h5>
+        {{#each feed_back}}
+        <li>
+            <h1>{{this.message}}</h1>
+            {{#each this.crops}}
+            <ul>
+                {{this}}
+            </ul>
+            {{/each}}
+        </li>
+        {{/each}}
     </section>
 
     <!-- Javascript files-->

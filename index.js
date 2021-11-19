@@ -3,9 +3,12 @@ const bycrpt = require('bcrypt');
 const saltRounds = 10;
 
 
-const exphbs  = require('express-handlebars');
+const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const FeedBack = require('./FeedBack');
 
+let feedBack = FeedBack();
 
 // import sqlite modules
 const sqlite3 = require('sqlite3');
@@ -13,7 +16,7 @@ const { open } = require('sqlite');
 let app = express();
 
 
-app.engine('handlebars', exphbs({defaultLayout: false}));
+app.engine('handlebars', exphbs({ defaultLayout: false }));
 app.set('view engine', 'handlebars');
 
 
@@ -26,17 +29,26 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(express.static('public'));
 
+// app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'secret string',
+  resave: false,
+  saveUninitialized: false
+  // store: store, /* store session data in mongodb */ 
+  // cookie: { /* can add cookie related info here */ }
+}));
+
 
 open({
-	filename: './login.db',
-	driver: sqlite3.Database
+  filename: './login.db',
+  driver: sqlite3.Database
 }).then(async function (db) {
 
-	// run migrations
+  // run migrations
 
-	await db.migrate();
+  await db.migrate();
 
-	//only setup the routes once the database connection has been established
+  //only setup the routes once the database connection has been established
   // app.get('/', function(req, res){
   //   db
   //   .all('select * from login')
@@ -50,41 +62,80 @@ open({
   // }); 
 
   app.get('/', function (req, res) {
-    res.render('login') 
+    res.render('login')
   });
-  
-  app.get('/login', function (req, res) {
-    res.render('login') 
+
+  app.get('/login', async function (req, res) {
+    const get = await db.all("select * from login");
+    console.log(get);
+    res.render('login')
   });
-  
-  app.get('/home', function (req, res) {
-    res.render('home') 
+
+  app.get('/home', async function (req, res) {
+    res.render('home')
   });
 
 
-   
+
   app.post('/signin/user', async function (req, res) {
-    const {username, password} = req.body;
+    const { username, password } = req.body;
     const getUserData = await db.all("select * from login where user_name = ?", username);
-    if (getUserData.length !== 0){
+    req.session.isDone = false;
+    if (getUserData.length !== 0) {
+      req.session.username = username;
       res.redirect('/home');
-    }else { 
+    } else {
       res.redirect('/login');
       console.log("tell the user the account does not exist");
     }
-    
-    console.log(getUserData);
+
+    // bycrpt.compare(password, getUserData[0].password, (err, isCorrect) => {
+    // if (err) console.error(err);
+    // if (isCorrect) {
+    // } else { 
+    // }
+    // });
   });
 
-  
+
   app.get('/profile', async function (req, res) {
-   res.render('profile');
+    const getProfiles = await db.all("select * from user_profile");
+    console.log(req.session.isDone);
+    if (req.session.isDone) {
+
+      let getUserProfile = await db.all("select * from user_profile where full_name = ?", req.session.username);
+      console.log(getUserProfile);
+      let userFeedBack = {
+        username: getUserProfile[0].full_name,
+        location: getUserProfile[0].location,
+        soiltype: getUserProfile[0].soiltype,
+        landsize: getUserProfile[0].landsize
+      };
+      feedBack.check(userFeedBack);
+      res.render('profile', {
+        feed_back: feedBack.getFeedBack()
+      });
+    } else {
+      res.render('profile');
+    }
+
   });
-   
+
   app.post('/profile/user', async function (req, res) {
+    const { full_name, age, location, land_size, soil_type, crop_type } = req.body;
+    const checkIfProfileExists = await db.all("select * from user_profile where full_name = ?", full_name);
+    if (checkIfProfileExists.length === 0) {
+      req.session.isDone = true;
+      await db
+        .run("insert into user_profile (full_name, age, location, landsize, soiltype, croptype) values (?, ?, ?, ?, ?, ?)",
+          full_name, age, location, land_size, soil_type, crop_type);
+      res.redirect("/profile");
+    } else {
+      // req.session.isDone = true;
+      console.log("the profile already exist");
+      res.redirect("/profile");
+    }
 
-
-    // const {username, password} = req.body;
     // const getUserData = await db.all("select * from login where user_name = ?", username);
     // if (getUserData.length !== 0){
     //   res.redirect('/home');
@@ -92,33 +143,35 @@ open({
     //   res.redirect('/login');
     //   console.log("tell the user the account does not exist");
     // }
-    
+
     // console.log(getUserData);
   });
 
 
   app.post('/signup/user', async function (req, res) {
-    const {username, email, password} = req.body;
-    const checkIfUserExists = await db.all('select * from login where user_name = ?',username);
-    if(checkIfUserExists.length !== 0){ 
-    bycrpt.hash(password, saltRounds, async (err,hashedPassword)=>{ 
+    const { username, email, password } = req.body;
+    const checkIfUserExists = await db.all('select * from login where user_name = ?', username);
+    if (checkIfUserExists.length === 0) {
+       bycrpt.hash(password, saltRounds, async (err, hashedPassword) => {
       if (err) console.error(err);
-      await db.run('insert into login (user_name, email, password) values (?, ?, ?)', username, email, hashedPassword);
-    });
+      req.session.isDone = false;
+      req.session.username = username;
+      await db.run('insert into login (user_name, email, password) values (?, ?, ?)', username, email, password);
+       });
       res.redirect('/home');
-    }else{ 
+    } else {
       console.log("tell the user that they already have an account");
-    res.redirect('/login');
+      res.redirect('/login');
     }
     let getAddedUser = await db.all('select * from login');
     console.log(getAddedUser);
-    
+
   });
-  
-  
+
+
   let PORT = process.env.PORT || 3007;
-  
-  app.listen(PORT, function(){
+
+  app.listen(PORT, function () {
     console.log('App starting on port', PORT);
   });
 })
