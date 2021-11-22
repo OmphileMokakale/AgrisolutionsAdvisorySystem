@@ -75,6 +75,10 @@ open({
     res.render('home')
   });
 
+  app.get('/weather', async function (req, res) {
+    res.render('weather')
+  });
+
 
 
   app.post('/signin/user', async function (req, res) {
