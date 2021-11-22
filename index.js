@@ -76,7 +76,7 @@ open({
 
   app.get("/get/feedback", function(req,res){
     res.render("profile", {
-      feedback: feedBack.getFeedBack();
+      feedback: feedBack.getFeedBack()
     });
   })
 
