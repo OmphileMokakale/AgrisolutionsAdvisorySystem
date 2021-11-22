@@ -3,6 +3,8 @@ let express = require('express');
 
 const exphbs  = require('express-handlebars');
 const bodyParser = require('body-parser');
+const Feedback = require('./Feedback');
+let feedbackArray = [];
 
 
 // import sqlite modules
@@ -22,6 +24,8 @@ app.use(express.urlencoded({ extended: false }))
 // parse application/json
 app.use(express.json())
 app.use(express.static('public'));
+
+const feedBack = Feedback(feedbackarray);
 
 
 open({
@@ -55,8 +59,28 @@ open({
   });
   
   app.get('/home', function (req, res) {
-    res.render('home') 
+    res.render('home');
   });
+
+  app.get("/weather", async function(req,res){
+    res.render("weather");
+  });
+
+  app.post("/feedback", function (req,res) {
+    const {gjjjgbjfb} = req.body;
+    // some database code to save the input from the user
+    // get the feedback and save it in the array 
+    feedbackarray.push("some feedback");
+    res.redirect("/get/feedback");
+  });
+
+  app.get("/get/feedback", function(req,res){
+    res.render("profile", {
+      feedback: feedBack.getFeedBack();
+    });
+  })
+
+
   
   
   let PORT = process.env.PORT || 3007;
