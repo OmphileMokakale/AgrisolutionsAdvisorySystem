@@ -1,6 +1,7 @@
 let express = require('express');
 const bycrpt = require('bcrypt');
 const saltRounds = 10;
+const path = require('path');
 
 
 const exphbs = require('express-handlebars');
@@ -15,19 +16,33 @@ const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
 let app = express();
 
+app.use(express.static('public'));
 
-app.engine('handlebars', exphbs({
-  defaultLayout: false,
-  partialsDir: __dirname + '/views/partials'
-}));
+var hbs = exphbs.create({
+  helpers: {
+      getStringifiedJson: function (value) {
+          return JSON.stringify(value);
+      }
+  },
+  defaultLayout: 'main',
+  partialsDir: ['views/partials/']
+});
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
+
+// app.engine('handlebars', exphbs({
+//   defaultLayout: false,
+//   partialsDir: __dirname + '/views/partials'
+// }));
+// app.set('view engine', 'handlebars');
 
 
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }))
 // parse application/json
 app.use(express.json())
-app.use(express.static('public'));
+
 
 // app.set('trust proxy', 1) // trust first proxy
 app.use(session({
@@ -62,7 +77,7 @@ open({
   // }); 
 
   app.get('/', function (req, res) {
-    res.render('login')
+    res.render('home')
   });
 
   app.get('/login', async function (req, res) {
@@ -167,12 +182,16 @@ open({
     console.log(getAddedUser);
   });
 
-  app.get('/weather/prediction', async function (req, res) {
-    res.render("weather-prediction");
+  app.get('/weather', async function (req, res) {
+    res.render("weather");
   });
 
-  app.get('/inquiries', async function(req,res){
-  res.render("inquiries");
+  app.get('/inquiries', async function (req, res) {
+    res.render("inquiries");
+  });
+
+  app.get('/cropandfunding', async function(req,res){
+  res.render("Crop&Funding");
   });
 
 
