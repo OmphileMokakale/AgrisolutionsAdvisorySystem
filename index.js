@@ -16,11 +16,11 @@ const { open } = require('sqlite');
 let app = express();
 
 
-app.engine('handlebars', exphbs({ defaultLayout: false }));
+app.engine('handlebars', exphbs({
+  defaultLayout: false,
+  partialsDir: __dirname + '/views/partials'
+}));
 app.set('view engine', 'handlebars');
-
-
-
 
 
 // parse application/x-www-form-urlencoded
@@ -152,12 +152,12 @@ open({
     const { username, email, password } = req.body;
     const checkIfUserExists = await db.all('select * from login where user_name = ?', username);
     if (checkIfUserExists.length === 0) {
-       bycrpt.hash(password, saltRounds, async (err, hashedPassword) => {
-      if (err) console.error(err);
-      req.session.isDone = false;
-      req.session.username = username;
-      await db.run('insert into login (user_name, email, password) values (?, ?, ?)', username, email, password);
-       });
+      bycrpt.hash(password, saltRounds, async (err, hashedPassword) => {
+        if (err) console.error(err);
+        req.session.isDone = false;
+        req.session.username = username;
+        await db.run('insert into login (user_name, email, password) values (?, ?, ?)', username, email, password);
+      });
       res.redirect('/home');
     } else {
       console.log("tell the user that they already have an account");
@@ -165,7 +165,14 @@ open({
     }
     let getAddedUser = await db.all('select * from login');
     console.log(getAddedUser);
+  });
 
+  app.get('/weather/prediction', async function (req, res) {
+    res.render("weather-prediction");
+  });
+
+  app.get('/inquiries', async function(req,res){
+  res.render("inquiries");
   });
 
 

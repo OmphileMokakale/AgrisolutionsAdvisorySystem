@@ -54,7 +54,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                   <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
                   <nav class="navigation navbar navbar-expand-md navbar-dark ">
                      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04"
                         aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,7 @@
     <!-- end header inner -->
     <!-- end header -->
     <!-- banner -->
-     <section class="banner_main">
+    <section class="banner_main">
       <div class="container">
          <div class="row">
             <div class="col-md-12">
@@ -110,29 +110,29 @@
    </section>
     <!-- end banner -->
     <!-- form_lebal -->
-    <section>
+    <section >
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <form class="form_book">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="date">Planting Date</label>
-                                <input class="book_n" type="date">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="date">Location</label>
-                                <input class="book_n" placeholder="Mpumalanga" type="type" name="2">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="date">Type of crop</label>
-                                <input class="book_n" placeholder="Spinach" type="type" name="2">
-                            </div>
-                            <div class="col-md-3">
-                                <button class="book_btn">Weather Prediction</button>
-                            </div>
+                    <!-- <form class="form_book">
+                     <div class="row">
+                        <div class="col-md-3">
+                           <label class="date">Planting Date</label>
+                           <input class="book_n"  type="date" >
                         </div>
-                    </form>
+                        <div class="col-md-3">
+                           <label class="date">Location</label>
+                           <input class="book_n" placeholder="Mpumalanga" type="type" name="2">
+                        </div>
+                        <div class="col-md-3">
+                           <label class="date">Type of crop</label>
+                           <input class="book_n" placeholder="Spinach" type="type" name="2">
+                        </div>
+                        <div class="col-md-3">
+                           <button class="book_btn">Weather Prediction</button>
+                        </div>
+                     </div>
+                  </form> -->
                 </div>
             </div>
         </div>
@@ -156,44 +156,62 @@
 
     <section>
 
-        <div class="col-md-6" style="margin: auto;">
-            <form action="/profile/user" method="post" id="request" class="main_form">
-                <div class="row">
-                    <div class="col-md-12 ">
-                        <input class="contactus" placeholder="Full Name" type="type" name="full_name">
-                    </div>
-                    <div class="col-md-12">
-                        <input class="contactus" placeholder="Age" type="type" name="age">
-                    </div>
-                    <div class="col-md-12">
-                        <input class="contactus" placeholder="Location" type="type" name="location">
-                    </div>
-                    <div class="col-md-12">
-                        <input class="contactus" placeholder="LandSize" type="type" name="land_size">
-                    </div>
-                    <div class="col-md-12">
-                        <input class="contactus" placeholder="Soil Type" type="type" name="soil_type">
-                    </div>
-                    <div class="col-md-12">
-                        <input class="contactus" placeholder="Crop Type" type="type" name="crop_type">
-                    </div>
-                    <div class="col-sm-12">
-                        <button type="submit" class="send_btn">Send</button>
+
+
+
+        {{!-- {{> chatbot}} --}}
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
+                <div class="col">
+                    <div class="col-md-6" style="margin: auto;">
+                        <form id="request" class="main_form">
+                            <div class="row">
+                                {{!-- <div class="col-md-12 ">
+                                    <label for="dog-names">Choose a Native Language:</label>
+                                    <select name="dog-names" id="dog-names">
+                                        <option value="rigatoni">English</option>
+                                        <option value="dave">Afrikaans</option>
+                                        <option value="pumpernickel">Setswana</option>
+                                        <option value="reeses">zulu</option>
+                                        <option value="reeses">Xhosa</option>
+                                        <option value="reeses">Venda</option>
+                                        <option value="reeses">Sotho</option>
+                                        <option value="reeses">Swati</option>
+                                        <option value="reeses">Tsonga</option>
+                                        <option value="reeses">Ndebele</option>
+                                    </select>
+                                    <br>
+                                    <br>
+                                    <br>
+                                </div> --}}
+                                <div class="col-md-12">
+                                    <form action="/action_page.php">
+                                        <input style="background-color: white;" type="file" id="myFile" name="filename">
+                                        {{!--
+                                    </form> --}}
+                                    <br>
+                                    <br>
+                                    <div class="col-md-12">
+                                        <textarea class="textarea" placeholder="Message" type="type"
+                                            Message="Name">Message </textarea>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <button class="send_btn">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
+                <div class="col" style="margin-top: 100px;">
+                    {{> chatbot}}
+                </div>
+                {{!-- <div class="col">
+
+                </div> --}}
+                {{!-- <div class="col">Column</div> --}}
+            </div>
         </div>
-        <h5>Feedback</h5>
-        {{#each feed_back}}
-        <li>
-            <h1>{{this.message}}</h1>
-            {{#each this.crops}}
-            <ul>
-                {{this}}
-            </ul>
-            {{/each}}
-        </li>
-        {{/each}}
     </section>
 
     <!-- Javascript files-->

@@ -43,6 +43,7 @@ body {
      font-family: 'Raleway', sans-serif;
      line-height: 1.80857;
      font-weight: normal;
+     background-color: rgba(217, 232, 236, 0.5);
 }
 
 a {
@@ -274,9 +275,10 @@ button {
 
 .navigation.navbar-dark .navbar-nav .nav-link {
      padding: 0 25px;
-     color: #fff;
+     color: black;
      font-size: 16px;
-     line-height: 20px;
+     font-weight: 700;
+     line-height: 50px;
      text-transform: uppercase;
 }
 
@@ -746,6 +748,7 @@ button {
      border: inherit;
      padding: 0px 19px;
      margin-bottom: 20px;
+     margin-left: -15px;
      width: 100%;
      background: #fff;
      color: #292e39;
@@ -779,6 +782,7 @@ button {
 #request *::placeholder {
      color: #4d4d4f;
      opacity: 1;
+    
 }
 
 .multi {
@@ -847,6 +851,31 @@ button {
      color: #eec237;
 }
 
+.chatbotBtn{
+     border-radius: 50% !important;
+}
+
+.button {
+     background-color: #04AA6D; /* Green */
+     border: none;
+     color: white;
+     padding: 20px;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+     font-size: 16px;
+     margin: 4px 2px;
+     cursor: pointer;
+   }
+
+   .chat-popup {
+     display: none;
+     position: fixed;
+     bottom: 0;
+     right: 15px;
+     border: 3px solid #f1f1f1;
+     z-index: 9;
+   }
 
 /** end footer **/
 
