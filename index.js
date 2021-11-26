@@ -8,8 +8,11 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const FeedBack = require('./FeedBack');
+const ML_probality = require('./MlProbability');
+let alert = require('alert'); 
 
 let feedBack = FeedBack();
+
 
 // import sqlite modules
 const sqlite3 = require('sqlite3');
@@ -20,9 +23,9 @@ app.use(express.static('public'));
 
 var hbs = exphbs.create({
   helpers: {
-      getStringifiedJson: function (value) {
-          return JSON.stringify(value);
-      }
+    getStringifiedJson: function (value) {
+      return JSON.stringify(value);
+    }
   },
   defaultLayout: 'main',
   partialsDir: ['views/partials/']
@@ -62,6 +65,7 @@ open({
   // run migrations
 
   await db.migrate();
+  const ml_probality = ML_probality(db);
 
   //only setup the routes once the database connection has been established
   // app.get('/', function(req, res){
@@ -182,16 +186,67 @@ open({
     console.log(getAddedUser);
   });
 
+  app.post('/contact/user', async function (req, res) {
+    // const { username, email, password } = req.body;
+    // const checkIfUserExists = await db.all('select * from login where user_name = ?', username);
+    // if (checkIfUserExists.length === 0) {
+    //   bycrpt.hash(password, saltRounds, async (err, hashedPassword) => {
+    //     if (err) console.error(err);
+    //     req.session.isDone = false;
+    //     req.session.username = username;
+    //     await db.run('insert into login (user_name, email, password) values (?, ?, ?)', username, email, password);
+    //   });
+    //   res.redirect('/home');
+    // } else {
+    //   console.log("tell the user that they already have an account");
+    //   res.redirect('/login');
+    // }
+    // let getAddedUser = await db.all('select * from login');
+    // console.log(getAddedUser);
+    res.redirect('/home');
+    
+    alert("We will Contact You")
+  });
+
   app.get('/weather', async function (req, res) {
     res.render("weather");
   });
 
+  app.get('/about', async function (req, res) {
+    res.render("about");
+  });
+
   app.get('/inquiries', async function (req, res) {
+    await db.run('delete from ml');
     res.render("inquiries");
   });
 
-  app.get('/cropandfunding', async function(req,res){
-  res.render("Crop&Funding");
+  app.get('/cropandfunding', async function (req, res) {
+    res.render("Crop&Funding");
+  });
+
+  app.post('/ml/prediction', async function (req, res) {
+    const { cropProbality, cropClassName } = req.body;
+    let data = {
+      cropProbality,
+      cropClassName,
+      userName: "Omphile",
+      cropType: "",
+    };
+    const mlFeedback = ml_probality.checkIfExist(data);
+    if ((await mlFeedback).isExists) {
+      res.json({
+        status: true,
+        "message": 'Crop has been saved',
+        feedback: (await mlFeedback).mlFeedback
+      });
+    } else if (!(await mlFeedback).isExists) {
+      res.json({
+        status: false,
+        "message": 'Crop already saved'
+      });
+    }
+
   });
 
 
