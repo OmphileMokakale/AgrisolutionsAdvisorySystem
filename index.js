@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const FeedBack = require('./FeedBack');
 const ML_probality = require('./MlProbability');
-let alert = require('alert'); 
+let alert = require('alert');
 
 let feedBack = FeedBack();
 
@@ -83,10 +83,8 @@ open({
   app.get('/', function (req, res) {
     res.render('login')
   });
-
   app.get('/login', async function (req, res) {
     const get = await db.all("select * from login");
-    console.log(get);
     res.render('login')
   });
 
@@ -107,40 +105,15 @@ open({
       res.redirect('/login');
       console.log("tell the user the account does not exist");
     }
-
-    // bycrpt.compare(password, getUserData[0].password, (err, isCorrect) => {
-    // if (err) console.error(err);
-    // if (isCorrect) {
-    // } else { 
-    // }
-    // });
   });
 
 
   app.get('/profile', async function (req, res) {
-    const getProfiles = await db.all("select * from user_profile");
-    console.log(req.session.isDone);
-    if (req.session.isDone) {
-
-      let getUserProfile = await db.all("select * from user_profile where full_name = ?", req.session.username);
-      console.log(getUserProfile);
-      let userFeedBack = {
-        username: getUserProfile[0].full_name,
-        location: getUserProfile[0].location,
-        soiltype: getUserProfile[0].soiltype,
-        landsize: getUserProfile[0].landsize
-      };
-      feedBack.check(userFeedBack);
-      res.render('profile', {
-        feed_back: feedBack.getFeedBack()
-      });
-    } else {
-      res.render('profile');
-    }
-
+    res.render('profile');
   });
 
   app.post('/profile/user', async function (req, res) {
+    console.log(req.body);
     const { full_name, age, location, land_size, soil_type, crop_type } = req.body;
     const checkIfProfileExists = await db.all("select * from user_profile where full_name = ?", full_name);
     if (checkIfProfileExists.length === 0) {
@@ -148,22 +121,32 @@ open({
       await db
         .run("insert into user_profile (full_name, age, location, landsize, soiltype, croptype) values (?, ?, ?, ?, ?, ?)",
           full_name, age, location, land_size, soil_type, crop_type);
-      res.redirect("/profile");
-    } else {
-      // req.session.isDone = true;
-      console.log("the profile already exist");
-      res.redirect("/profile");
+
+      console.log(req.session.username);
+      req.session.isDone = true;
+      if (req.session.isDone) {
+        let getUserProfile = await db.all("select * from user_profile where full_name = ?", req.session.username);
+        console.log(getUserProfile);
+        let userFeedBack = {
+          username: getUserProfile[0].full_name,
+          location: getUserProfile[0].location,
+          soiltype: getUserProfile[0].soiltype,
+          landsize: getUserProfile[0].landsize
+        };
+        feedBack.check(userFeedBack);
+        res.json({
+          status: true,
+          feedBack: feedBack.getFeedBack()
+        });
+      } else {
+
+        console.log("the profile already exist");
+        res.json({
+          status: false
+        });
+      }
     }
 
-    // const getUserData = await db.all("select * from login where user_name = ?", username);
-    // if (getUserData.length !== 0){
-    //   res.redirect('/home');
-    // }else { 
-    //   res.redirect('/login');
-    //   console.log("tell the user the account does not exist");
-    // }
-
-    // console.log(getUserData);
   });
 
 
@@ -204,7 +187,7 @@ open({
     // let getAddedUser = await db.all('select * from login');
     // console.log(getAddedUser);
     res.redirect('/home');
-    
+
     alert("We will Contact You")
   });
 
@@ -230,7 +213,7 @@ open({
     let data = {
       cropProbality,
       cropClassName,
-      userName: "Omphile",
+      userName: "Victoria Vicks",
       cropType: "",
     };
     const mlFeedback = ml_probality.checkIfExist(data);
